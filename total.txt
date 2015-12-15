@@ -1,0 +1,80 @@
+% matlab code
+X='E:/DSP.wav';                                 % signal acquisition 
+[x,fs,nb]=wavread(X);
+t=(0:length(x)-1)/fs;        
+rp= 0.02;
+rs= 0.01;
+fp=2000;
+fs1=2200;
+f=8000;
+beta= 5.8;
+wp=2*(fp/f);
+ws=2*(fs1/f);
+num=-20*log10(sqrt(rp*rs))-13;
+dem=14.6*(fs1-fp)/f;
+n=ceil(num/dem);
+n1=n+1;
+if(rem(n,2)~=0)
+n1=n;
+n=n-1;
+end;
+y0=kaiser(n1,beta);%Low pass filter
+b=fir1(n,wp,y0);
+[h0,o]=freqz(b,1,256);
+
+y1=fftfilt(b,x);                                  % signal processing with H0
+y22=downsample(y1, 2);                      % sampling rate is ? of original one
+y33=upsample(y22,2);                          % sampling rate is 2 of original one 
+y44=fftfilt(b,y33);                                % signal processing with G0
+figure (1)
+plot(x);title('Original sound signal-x(n)');
+xlabel('Time(s)');
+ylabel('Amplitude');
+figure (2)
+plot(y44);title('Sound signal after filtering-v(n)');
+xlabel('Time(s)');
+ylabel('Amplitude');
+yn1=fft(y44);
+figure(3)
+freqz(yn1)
+title('Sound signal after filtering-v(n)-frequency response');
+
+rp= 0.02;
+rs= 0.01;
+fp=2000;
+fs2=2200;
+f=8000;
+beta= 5.8;
+wp=2*(fp/f);
+ws=2*(fs2/f);
+num=-20*log10(sqrt(rp*rs))-13;
+dem=14.6*(fs2-fp)/f;
+n=ceil(num/dem);
+n1=n+1;
+if(rem(n,2)~=0)
+n1=n;
+n=n-1;
+end;
+y00=kaiser(n1,beta);
+%Highpass filter
+b1=fir1(n,wp,'high',y00);
+y111=fftfilt(b1,x);                                     % signal processing with H0
+y222=downsample(y111,2);                      % sampling rate is 1/2 of original one
+y333=upsample(y222,2);                          % sampling rate is 2 of original one
+y444=fftfilt(b1,y333);                                % signal processing with G0
+figure (4)
+plot(y444);title('Sound signal after filtering-w(n)');
+xlabel('Time(s)');
+ylabel('Amplitude');
+yn2=fft(y444);
+figure(5)
+freqz(yn2)
+title('Sound signal after filtering-w(n)-frequency response');
+%plot(abs(yn2)); 
+y5=y44+y444;
+figure (6)
+plot(y5);title('Final sound signal-y(n)');
+xlabel('Time(s)');
+ylabel('Amplitude');
+sound(y5,fs);  
+wavwrite(y5,8000,'E:/DSP-fianl.wav');  
