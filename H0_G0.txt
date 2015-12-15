@@ -1,0 +1,18 @@
+B=[0.707 0.707]; 
+A =[1 0]; 
+[H,w]=freqz(B,A,1024);% H is the range of frequency£¬w is the points between 0 and pi
+
+H=freqz(B,A,w);% H is the range of frequency£¬w is the points between 0 and pi
+Hf=abs(H);
+Hx=angle(H);
+clf
+figure(1)
+plot(w, 20*log10(Hf))
+title('H0 G0 filter magnitude response')
+ylabel(' Magnitude/(dB)');
+xlabel(' Radian /(rad)');
+figure(2)
+plot(w,Hx) 
+title('H0 G0 filter phase frequency response')
+ylabel(' Phase/(degree)');
+xlabel(' radian /(rad)');
