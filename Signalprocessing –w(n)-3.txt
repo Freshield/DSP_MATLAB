@@ -1,0 +1,21 @@
+% matlab code
+X='E:/DSP.wav';                                 % signal acquisition 
+[x,fs,nb]=wavread(X);
+t=(0:length(x)-1)/fs;        
+H=[0.707 -0.707];                                %filter design H0
+y1=fftfilt(H,x);                                  % signal processing with H0
+y2=downsample(y1,2);                      % sampling rate is ? of original one
+y3=upsample(y2,2);                          % sampling rate is 2 of original one 
+y4=fftfilt(H,y3);                                % signal processing with G0
+figure (1)
+plot(x);title('Original sound signal');
+xlabel('Time(s)');
+ylabel('Amplitude');
+figure (2)
+plot(y4);title('Sound signal after filtering');
+xlabel('Time(s)');
+ylabel('Amplitude');
+yn=fft(y4);
+figure(3)
+plot(abs(yn));
+sound(y4,fs); wavwrite(y4,8000,'E:/DSP-c-w.wav');              
