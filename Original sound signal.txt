@@ -1,0 +1,14 @@
+% to acquire the speech signal, the content is Hello (three times).
+X= 'E:/DSP.wav'; 
+[x,fs,nb]=wavread(X);
+t=(0:length(x)-1)/fs;    
+figure(1)
+plot(t,x);  
+title('Waveform in time domain');   
+legend('Waveform');
+xlabel( 'Time(s)');
+ylabel('Amplitude');
+yn=fft(x);
+figure(2)
+freqz(yn)
+plot(abs(yn));
